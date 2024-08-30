@@ -8,6 +8,8 @@ setup() {
   ddev delete -Oy ${PROJNAME} >/dev/null 2>&1 || true
   cd "${TESTDIR}"
   ddev config --project-name=${PROJNAME}
+
+
   ddev start -y >/dev/null
 }
 
@@ -18,24 +20,36 @@ teardown() {
   [ "${TESTDIR}" != "" ] && rm -rf ${TESTDIR}
 }
 
+check_installed () {
+  # backstop is installed and can show its version
+  echo "Checking backstopjs version with `ddev backstopjs local version`" >&3
+  ddev backstopjs local version | grep 'Command "version" successfully executed' >&3
+}
+
+check_backstopjs () {
+  # Create reference bitmaps
+  echo "Creating backstopjs references with `ddev backstopjs local reference`" >&3
+  ddev backstopjs local reference >&3
+  # Test should pass because there is a reference bitmaps
+  echo "Testing backstopjs references with `ddev backstopjs local test`" >&3
+  ddev backstopjs local test >&3
+}
+
 @test "install from directory" {
   set -eu -o pipefail
   cd ${TESTDIR}
   echo "# ddev get ${DIR} with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
   ddev get ${DIR}
+  echo "Installed add-on from directory, restarting ddev" >&3
   ddev restart
 
-  # backstop is installed and can show its version
-  ddev backstopjs local version | grep 'Command "version" successfully executed'
-
-  # Test should fail because there is no reference bitmaps
-  ddev backstopjs local test | grep 'Command "version" successfully executed' || true
-  # Create reference bitmaps
-  ddev backstopjs local reference
-  # Test should pass because there is a reference bitmaps
-  ddev backstopjs local test
-
+  echo "Testing backstopjs" >&3
+  check_installed
+  check_backstopjs
 }
+
+
+
 
 #@test "install from release" {
 #  set -eu -o pipefail
