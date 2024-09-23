@@ -1,5 +1,4 @@
 [![tests](https://github.com/Metadrop/ddev-backstopjs/actions/workflows/tests.yml/badge.svg)](https://github.com/Metadrop/ddev-backstopjs/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2024.svg)
-![GitHub Release](https://img.shields.io/github/v/release/Metadrop/ddev-backstopjs)
 
 * [What is DDEV Backstopjs Add-on?](#what-is-ddev-backstopjs-add-on)
 * [Getting started](#getting-started)
@@ -15,11 +14,10 @@
 
 ## What is DDEV Backstopjs Add-on?
 
-This is a ddev-addon for [backstop.js](https://github.com/garris/BackstopJS) based on [mmunz](https://github.com/mmunz/ddev-backstopjs) addon but optimized for Aljibe, a visual regression testing tool.
+This is a ddev-addon for [backstop.js](https://github.com/garris/BackstopJS) based on [mmunz](https://github.com/mmunz/ddev-backstopjs) addon but optimized for Aljibe. Backstopjs is a visual regression testing tool.
 Backstop is executed in a docker container based on the official [backstopjs docker image](https://hub.docker.com/r/backstopjs/backstopjs).
 
-This addon just provides the basics to run backstopjs. No backstopjs config is included. See below how to generate a
-config and for links to a more advanced example config.
+This addon just provides the basics to run backstopjs and some basic tests, but those need to be adapted to your needs.
 
 ## Getting started
 
@@ -43,9 +41,9 @@ The backstopjs/backstopjs is about 2.6GB, so this may take some time.**
 
 ### Configuration
 
-By default, the backstop tests are expected in $DDEV_APPDIR/tests/backstop.
+By default, the backstop tests are expected in $DDEV_APPDIR/tests/backstopjs/<environemnt_folder>. 
 
-Provide your own backstop.js or backstop.json configs there.
+This add-on provide some tests inside "local" environment folder ($DDEV_APPDIR/tests/backstopjs/local). This can be taken as a base to add more tests or provide your own backstop.js or backstop.json configs there.
 
 Hint: have a look at the example from mmunz [backstopjs-config](https://github.com/mmunz/backstopjs-config) 
 
@@ -57,19 +55,21 @@ ddev backstop init
 
 ### Run tests
 
-After the config was created it is time to run the tests:
+After the config was created it is time to run the tests. 
 
 Create reference screenshots:
 
 ```shell
-ddev backstop reference
+ddev backstop <environment> reference
 ```
 
 Create test images and compare to reference screenshots:
 
 ```shell
-ddev backstop test
+ddev backstop <environment> test
 ```
+
+Where <environment> is the environment folder name, or 'local' if not especified.  
 
 If your config file is not 'backstop.json' you need to use the --config argument, e.g. --config=backstop.js
 
@@ -80,14 +80,24 @@ The backstop commands 'backstop remote' and 'backstop openReport' do not work in
 But there is a host command that will open the latest test report in your default browser:
 
 ```shell
-ddev backstop-results
+ddev backstopjs-report <environment>
 ```
 
 Alternatively open the generated HTML-Report with your browser, e.g.:
 
 ```shell
-open tests/backstop/backstop_data/_mytestproject_/html_report/index.html 
+open tests/backstopjs/<environment>/backstop_data/_mytestproject_/html_report/index.html 
 ```
+
+### Commands aliases
+
+Command ```ddev backstopjs``` can be called as:
+ - ```ddev backstop```
+ - ```ddev bkjs```
+
+Command ```ddev backstopjs-report``` can be called as:
+ - ```ddev backstop-report```
+ - ```ddev bjsr```
 
 ## Changes to the original docker image
 
