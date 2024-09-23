@@ -3,8 +3,9 @@
 #ddev-generated
 
 ## Description: Launch a browser with latest backstop results
-## Usage: backstop-results
-## Example: "ddev backstop-results"
+## Usage: backstopjs-report <environment_folder>
+## Aliases: backstop-report, bjsr
+## Example: "ddev backstop-report local"
 
 FOLDER=${1:-local}
 
