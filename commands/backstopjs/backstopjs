@@ -3,16 +3,35 @@
 #ddev-generated
 
 ## Description: Run backstopjs
-## Usage: backstopjs [args]
-## Example: "ddev backstopjs version"
+## Usage: backstopjs <env> [args]
+## Example: "ddev backstopjs <env> version"
+## Aliases: backstop, bkjs
 ## ExecRaw: true
 
+RED='\033[0;31m'
+# No Color
+NC='\033[0m'
+
+# Folder to look at backstop.json, represents an environment
 FOLDER=$1
 
-if [ "$1" == "openReport" -o "$1" == "remote" ]; then
-  echo "This does not work for backstop in ddev"
+BKJS_BASE_PATH='/src/tests'
+
+## Check if we called test or reference without specifying the environment
+if [ "$FOLDER" == "test" ] || [ "$FOLDER" == "reference" ]; then
+  set -- "$FOLDER" "$FOLDER" "${@:2}"
+  FOLDER=""
+fi
+
+if [ -z "$FOLDER" ]; then
+  FOLDER="local"
+  echo -e "${RED}No environment specified. Using 'local' as the default value.${NC}\n"
+fi
+
+if [ ! -d "${BKJS_BASE_PATH}/$FOLDER" -a ! -f "${BKJS_BASE_PATH}/$FOLDER/backstop.json" ]; then
+  echo -e "${RED}Environment '${FOLDER}' not found. The environment folder ${BKJS_BASE_PATH}/$FOLDER and the file backstop.json inside it must exist.${NC}\n"
   exit 1
 fi
 
-cd /src/tests/$FOLDER || exit 1
+cd ${BKJS_BASE_PATH}/$FOLDER || exit 1
 NODE_PATH="/usr/local/lib/node_modules/" backstop "${@:2}"
