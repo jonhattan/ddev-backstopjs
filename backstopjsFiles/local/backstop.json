@@ -22,7 +22,7 @@
   "scenarios": [
     {
       "label": "Homepage",
-      "url": "http://web/",
+      "url": "https://web/",
       "selectorExpansion": true,
       "readySelector": "body",
       "misMatchThreshold" : 0.1

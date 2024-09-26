@@ -1,3 +1,4 @@
+#!/bin/bash
 setup() {
   set -eu -o pipefail
   export DIR="$( cd "$( dirname "$BATS_TEST_FILENAME" )" >/dev/null 2>&1 && pwd )/.."
@@ -7,10 +8,10 @@ setup() {
   export DDEV_NON_INTERACTIVE=true
   ddev delete -Oy ${PROJNAME} >/dev/null 2>&1 || true
   cd "${TESTDIR}"
-  ddev config --project-name=${PROJNAME}
-
-
+  ddev config --project-name=${PROJNAME} --project-type=php
+  ddev get metadrop/ddev-aljibe
   ddev start -y >/dev/null
+  ddev aljibe-assistant --auto
 }
 
 teardown() {
@@ -49,14 +50,11 @@ check_backstopjs () {
 }
 
 
-
-
-#@test "install from release" {
-#  set -eu -o pipefail
-#  cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
-#  echo "# ddev get drud/ddev-addon-template with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
-#  ddev get drud/ddev-addon-template
-#  ddev restart >/dev/null
-#  # Do something useful here that verifies the add-on
-#  # ddev exec "curl -s elasticsearch:9200" | grep "${PROJNAME}-elasticsearch"
-#}
+@test "install from release" {
+  set -eu -o pipefail
+  cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
+  echo "Aljibe already have the release version, running tests now"
+  echo "Testing backstopjs" >&3
+  check_installed
+  check_backstopjs
+}
