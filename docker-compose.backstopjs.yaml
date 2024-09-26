@@ -1,10 +1,6 @@
 #ddev-generated
 services:
-  # This is the service name used when running ddev commands accepting the
-  # --service flag.
   backstopjs:
-    # This is the name of the container. It is recommended to follow the same
-    # name convention used in the main docker-compose.yml file.
     container_name: ddev-${DDEV_SITENAME}-backstopjs
     build:
       context: './backstopjsBuild'
@@ -19,21 +15,21 @@ services:
     # Add init to reap Chrome processes, as noted at
     # https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
     init: true
-    entrypoint: [ /entrypoint.sh ]
     shm_size: 1gb
-    external_links:
-      - web:${DDEV_SITENAME}.${DDEV_TLD}
     environment:
       DDEV_HOSTNAME: $DDEV_HOSTNAME
       NODE_EXTRA_CA_CERTS: /mnt/ddev-global-cache/mkcert/rootCA.pem
-    # These labels ensure this service is discoverable by ddev.
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: ${DDEV_APPROOT}
+    entrypoint: [ /entrypoint.sh ]
     volumes:
       - ../tests/backstopjs:/src/tests
       - .:/mnt/ddev_config:ro
       - ddev-global-cache:/mnt/ddev-global-cache
-    networks:
-      ddev_default: null
-      default: null
+    networks: [default, ddev_default]
+    external_links:
+      - ddev-router:${DDEV_SITENAME}.${DDEV_TLD}
+  web:
+    links:
+      - backstopjs
